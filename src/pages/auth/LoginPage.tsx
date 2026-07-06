@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { GoogleSignInButton } from './GoogleSignInButton'
 
 export function LoginPage() {
   const { user, signIn } = useAuth()
@@ -50,6 +51,7 @@ export function LoginPage() {
             {busy ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+        <GoogleSignInButton onError={setError} />
         <p className="auth-switch">
           New here? <Link to="/signup">Create an account</Link>
         </p>

@@ -1,21 +1,24 @@
 import type { User } from 'firebase/auth'
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from 'firebase/auth'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { auth } from '../firebase/config'
-import { createUserProfile } from '../lib/firestore/userSettings'
+import { createUserProfile, ensureUserProfile } from '../lib/firestore/userSettings'
 
 interface AuthContextValue {
   user: User | null
   loading: boolean
   signUp: (displayName: string, email: string, password: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signOutUser: () => Promise<void>
 }
 
@@ -42,10 +45,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password)
   }
 
+  const signInWithGoogle = async () => {
+    const cred = await signInWithPopup(auth, new GoogleAuthProvider())
+    await ensureUserProfile(cred.user.uid, cred.user.displayName ?? 'Athlete', cred.user.email ?? '')
+  }
+
   const signOutUser = () => signOut(auth)
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOutUser }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOutUser }}>
+      {children}
+    </AuthContext.Provider>
   )
 }
 

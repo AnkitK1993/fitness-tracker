@@ -684,6 +684,19 @@ a.list-item:hover {
   flex-direction: column;
   gap: 0.75rem;
 }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
 .auth-switch {
   text-align: center;
   color: var(--text-secondary);
