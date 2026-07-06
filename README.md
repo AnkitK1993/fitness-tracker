@@ -30,6 +30,24 @@ npm run build          # typecheck + production bundle in dist/
 firebase deploy        # optional: Firebase Hosting + rules + indexes
 ```
 
+### GitHub Pages
+
+`.github/workflows/deploy.yml` builds and publishes `dist/` on every push to `main`.
+
+1. **Settings → Pages**: set Source to **GitHub Actions**.
+2. **Settings → Secrets and variables → Actions**: add one repo secret per
+   `.env.example` key (`VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, etc.)
+   with the same values as your `.env.local`.
+3. **Firebase console → Authentication → Settings → Authorized domains**: add
+   `<username>.github.io` (Google sign-in will fail on the new domain otherwise).
+4. Push to `main` — the Actions tab shows the deploy; the site ends up at
+   `https://<username>.github.io/fitness-tracker/`.
+
+`vite.config.ts` is set to `base: '/fitness-tracker/'` for this project-page path,
+and `public/404.html` + a small script in `index.html` implement the
+[SPA redirect trick](https://github.com/rafgraph/spa-github-pages) so deep links
+(e.g. `/workouts`) survive a hard refresh, since Pages has no server-side rewrites.
+
 ## Notes
 
 - All measurements are stored in metric (kg / km); the kg↔lb and km↔mi setting only changes display.
